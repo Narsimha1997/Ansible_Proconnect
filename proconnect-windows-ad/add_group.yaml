@@ -10,7 +10,7 @@
       win_dns_client:
           adapter_names: Ethernet
           ipv4_addresses:
-          - 54.145.133.236
+          - 15.184.12.117
       register: dns_details
     - name: "Join Domain"
       win_domain_membership:
@@ -26,6 +26,6 @@
       win_group_membership:
         name: Remote Desktop Users
         members:
-           - proconnect\Proconnect-Super-Admin
+           - proconnect\Progroup1
         state: present
 
