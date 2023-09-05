@@ -3,8 +3,8 @@
   hosts: all
   gather_facts: true
   become: false
-#   vars:
- #   secret_var: "{{ lookup('hashi_vault', 'secret=secret/creds token=s.4YRTM9ChE1JR4mDaDABUsfyZ url=http://54.235.206.14:8200') }}"
+  vars:
+    secret_var: "{{ lookup('hashi_vault', 'secret=secret/data/creds token=hvs.0avfPz8TLjJ8LcggjiRjW3jA url=http://15.185.169.26:32332') }}"
   tasks:
     - name: "Set DNS Client"
       win_dns_client:
@@ -17,7 +17,7 @@
         dns_domain_name: proconnect.local
         hostname: "{{ ansible_hostname }}"
         domain_admin_user: vinayak@proconnect.local 
-        domain_admin_password: "{{ lookup('awx.awx.credential_input_source', 'name=ad-vault') }}"
+        domain_admin_password: "{{ secret_var.data.data.secret }}"
         state: domain
       register: domain_state
     - win_reboot:
