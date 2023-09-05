@@ -1,0 +1,54 @@
+---
+- name: Install Java and Tomcat on Windows
+  hosts: all
+  become: false
+  tasks:
+    - name: Download Java
+      win_get_url:
+        url: https://download.oracle.com/java/20/latest/jdk-20_windows-x64_bin.msi
+        dest: C:\jdk-20_windows-x64_bin.msi
+        headers:
+          "Cookie": "oraclelicense=accept-securebackup-cookie"
+
+    - name: Install Java
+      win_package:
+        path: C:\jdk-20_windows-x64_bin.msi
+        product_id: '{7B8A7BC9-611D-5E97-AE51-BB62567FFB9F}'
+        state: present
+
+    - name: Download Tomcat
+      win_get_url:
+        url: https://mirrors.estointernet.in/apache/tomcat/tomcat-9/v9.0.63/bin/apache-tomcat-9.0.63-windows-x64.zip
+        dest: C:\apache-tomcat-9.0.63-windows-x64.zip
+
+    - name: Extract Tomcat
+      win_unzip:
+        src: C:\apache-tomcat-9.0.63-windows-x64.zip
+        dest: C:\
+
+    - name: Set JAVA_HOME environment variable
+      win_environment:
+        name: JAVA_HOME
+        value: C:\Program Files\Java\jdk-20
+        level: machine
+
+    - name: Set CATALINA_HOME environment variable
+      win_environment:
+        name: CATALINA_HOME
+        value: C:\apache-tomcat-9.0.63
+        level: machine
+
+    - name: Install Chocolatey
+      win_chocolatey:
+        name: chocolatey
+        state: present
+
+    - name: Install Apache Tomcat
+      win_chocolatey:
+        name: tomcat
+        state: present
+
+    - name: Start Tomcat service
+      win_service:
+        name: Tomcat9
+        state: started

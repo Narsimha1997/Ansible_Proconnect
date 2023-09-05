@@ -1,0 +1,29 @@
+- name: "Windows Firewall"
+  hosts: all
+  gather_facts: true
+  become: false
+  tasks:
+    - name: "Set DNS Client"
+      win_dns_client:
+          adapter_names: Ethernet
+          ipv4_addresses:
+          - 3.239.52.169
+      register: dns_details
+    - name: "Join Domain"
+      win_domain_membership:
+        dns_domain_name: proconnect.local
+        hostname: "{{ ansible_hostname }}"
+        domain_admin_user: vinayak@proconnect.local
+        domain_admin_password: "Taashee@123"
+        state: domain        
+      register: domain_state
+    - win_reboot:
+      when: domain_state.reboot_required
+    - name: Add a local and domain user to a local group
+      win_group_membership:
+        name: Remote Desktop Users
+        members:
+           - proconnect\vinayak
+        state: present
+
+

@@ -1,0 +1,49 @@
+---
+- name: Install Apache Tomcat 10 using Ansible
+  hosts: all # Replace with your target hosts or group name
+  tasks:
+    - name: Update the System Packages
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Create a Tomcat User
+      user:
+        name: tomcat
+
+    - name: Create a Tomcat Group
+      group:
+        name: tomcat
+
+    - name: Install Java
+      yum:
+        name: java-1.8.0-openjdk
+        state: present
+
+    - name: Create a Tomcat Directory
+      file:
+        path: /opt/tomcat10
+        owner: tomcat
+        group: tomcat
+        mode: '0755'
+        state: directory
+
+    - name: Download & Unarchive Tomcat 10
+      unarchive:
+        src: https://mirrors.estointernet.in/apache/tomcat/tomcat-10/v10.0.20/bin/apache-tomcat-10.0.20.tar.gz
+        dest: /opt/tomcat10
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+
+    - name: Change ownership of Tomcat directory
+      file:
+        path: /opt/tomcat10
+        owner: tomcat
+        group: tomcat
+        mode: 'u+rwx,g+rx,o=rx'
+        recurse: yes
+        state: directory
+
+    - name: Start Apache Tomcat
+      shell: /opt/tomcat10/bin/startup.sh
+      become_user: tomcat

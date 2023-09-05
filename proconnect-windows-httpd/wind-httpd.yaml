@@ -1,0 +1,23 @@
+---
+- name: Install Apache HTTP Server on Windows
+  hosts: all
+  become: false
+  tasks:
+    - name: Install Chocolatey
+      win_chocolatey:
+        name: chocolatey
+        state: present
+
+    - name: Accept Apache HTTP Server license
+      win_command: choco feature enable -n=allowGlobalConfirmation
+
+    - name: Install Apache HTTP Server
+      win_chocolatey:
+        name: apache-httpd
+        state: present
+
+    - name: Start Apache service
+      win_service:
+        name: Apache
+        state: started
+

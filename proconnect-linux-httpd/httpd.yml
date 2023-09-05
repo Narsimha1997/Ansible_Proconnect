@@ -1,0 +1,21 @@
+---
+- name: Install Apache HTTP Server (httpd) on Amazon Linux
+  hosts: all 
+  tasks:
+    - name: Update the System Packages
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Install Apache HTTP Server (httpd)
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start and Enable httpd service
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
