@@ -8,7 +8,7 @@
   tasks:
     - name: "Set DNS Client"
       win_dns_client:
-          adapter_names: Ethernet
+          adapter_names: Ethernet 2
           ipv4_addresses:
           - 15.184.12.117
       register: dns_details
