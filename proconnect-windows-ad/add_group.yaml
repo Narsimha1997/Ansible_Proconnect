@@ -6,12 +6,17 @@
   vars:
     secret_var: "{{ lookup('hashi_vault', 'secret=secret/data/creds token=hvs.0avfPz8TLjJ8LcggjiRjW3jA url=http://15.185.169.26:32332') }}"
   tasks:
+    - name: "Gather Network Interfaces"
+      win_shell: Get-NetAdapter | Select-Object -ExpandProperty Name
+      register: network_interfaces
+
     - name: "Set DNS Client"
       win_dns_client:
-          adapter_names: Ethernet 2
+          adapter_names: "{{ network_interfaces.stdout_lines | join(',') }}"
           ipv4_addresses:
           - 15.184.12.117
       register: dns_details
+
     - name: "Join Domain"
       win_domain_membership:
         dns_domain_name: proconnect.local
@@ -20,12 +25,13 @@
         domain_admin_password: "{{ secret_var.data.data.secret }}"
         state: domain
       register: domain_state
+
     - win_reboot:
       when: domain_state.reboot_required
+
     - name: Add AD Group
       win_group_membership:
         name: Remote Desktop Users
         members:
            - proconnect\Progroup1
         state: present
-
