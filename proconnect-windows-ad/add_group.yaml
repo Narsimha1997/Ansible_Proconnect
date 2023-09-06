@@ -4,7 +4,7 @@
   gather_facts: true
   become: false
   vars:
-    secret_var: "{{ lookup('community.hashi_vault', 'secret=secret/data/creds token=hvs.0avfPz8TLjJ8LcggjiRjW3jA url=http://15.185.169.26:32332') }}"
+    secret_var: "{{ lookup('hashi_vault', 'secret=secret/data/creds token=hvs.0avfPz8TLjJ8LcggjiRjW3jA url=http://15.185.169.26:32332') }}"
   tasks:
     - name: "Gather Network Interfaces"
       win_shell: Get-NetAdapter | Select-Object -ExpandProperty Name
